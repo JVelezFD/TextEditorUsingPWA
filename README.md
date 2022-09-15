@@ -32,6 +32,8 @@
 
 
   ## Deployment:
+  
+  Here is the app link: https://texteditorwithpwa.herokuapp.com/
  
   
 
