@@ -11,18 +11,70 @@ module.exports = () => {
     mode: 'development',
     entry: {
       main: './src/js/index.js',
-      install: './src/js/install.js'
+      install: './src/js/install.js',
+      database: './src/js/database.js',
+      header: './src/js/header.js',
+      editor: './src/js/editor.js',
     },
     output: {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
+      //workers
+
+      new InjectManifest({
+        swSrc: './src-sw.js',
+        swDest: 'src-sw.js',
+      }),
+      //generate html file with bundle
+
+      new HtmlWebpackPlugin({
+        template: './index.html',
+        title: 'JATE'
+      }),
+
+      //manifest 
+
+      new WebpackPwaManifest ({
+        fingerprints: false, 
+        inject: true, 
+        name: 'Just Another Text Editor',
+        short_name: 'JATE',
+        description: 'Take notes in the browser',
+        background_color: '#302c2c',
+        theme_color: '#f0dcdf',
+        start_url: '/',
+        publicPath: '/',
+        icons: [{
+          src: path.resolve('src/images/logo.png'),
+          sizes: [96, 128, 256, 384, 512],
+          destination: path.join('assets', 'icons'),
+      }],
+
+      }),
       
     ],
 
     module: {
-      rules: [
+      //css loading
+      rules: [{
+
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        //babel setup
+        use: {
+          loader: 'babel-loader',
+          options:{
+            presets: ['@babel/preset-env'],
+            plugins: ['@babel/plugin-proposal-object-rest-spread','@babel/transform-runtime'],
+          }
+        }
+      }
         
       ],
     },
